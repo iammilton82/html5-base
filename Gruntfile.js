@@ -4,6 +4,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-less');
   grunt.loadNpmTasks('grunt-contrib-cssmin');
   grunt.loadNpmTasks('grunt-contrib-watch');
+  grunt.loadNpmTasks('grunt-contrib-uglify');
 
   // Project configuration.
   grunt.initConfig({
@@ -22,13 +23,38 @@ module.exports = function(grunt) {
             }  
         }  
     },  
+	uglify: {
+		build: {
+	  		options: {
+				beautify: false,
+				sourceMap: true,
+				preserveComments: false,
+				screwIE8: true,
+				sourceMapName: 'assets/source/main.map',
+				htmlmin: {
+					removeComments: true,
+					removeEmptyAttributes: true
+				},
+				mangle: false
+			},
+			files: {
+				'assets/js/main.min.js': ['assets/source/main.js']
+			}
+		}
+	},
     watch: {
-	    files: "assets/less/**/*.less",
-        tasks: ["less", "cssmin"]
+	    less: {
+		    files: "assets/less/**/*.less",
+	        tasks: ["less", "cssmin"]
+        },
+        js: {
+		    files: "assets/source/**/*.js",
+	        tasks: ["uglify:build"]
+        }
     }
   });
   
   // Default task(s).
-  grunt.registerTask('default', ['less', "cssmin", 'watch']);
+  grunt.registerTask('default', ['less', 'cssmin', 'uglify:build', 'watch']);
 
 };
